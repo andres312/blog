@@ -26,4 +26,12 @@ class Post extends Model
             ]
         ];
     }
+
+    /**
+     * A post belong to one user
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
