@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Http\Requests\PostRequest;
 
 class PostController extends Controller
 {
@@ -35,9 +35,33 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        //save
+        $post = Post::create(
+            [
+            'user_id' => auth()->user()->id,
+            ] +
+            $request->validated()
+        );
+        //validate fields
+        /*
+        $request->validate([
+            'title'=>'required|min:3|max:40',
+            'file' =>'image|mimes:jpg,jpeg,gif,png,svg|max:2048',
+            'body' =>'required'
+            //'iframe'=>'required'
+        ]);
+        */
+        //image
+        if ($request->file('file')) {
+            //save image in folder public/posts and link to post->image
+            $imagenes= $request->file('file')->store('public/posts');
+            $post->image = $imagenes;
+            $post->save();
+        }
+        //return to last view with session variable status
+        return back()->with('status','Successfully created');
     }
 
     /**

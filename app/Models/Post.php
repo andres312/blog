@@ -9,6 +9,14 @@ class Post extends Model
 {
     use HasFactory;
     use Sluggable;
+    // accept massive fields
+    protected $fillable = [
+        'title',
+        'body',
+        'iframe',
+        'image',
+        'user_id'
+    ];
 
 
     /**
