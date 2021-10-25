@@ -18,3 +18,8 @@ Route::get('/blog/{post}', [App\Http\Controllers\PageController::class, 'post'])
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//namespace backend, protected by auth and except show post
+use App\Http\Controllers\Backend\PostController;
+Route::resource('/posts', PostController::class)
+    ->middleware('auth')
+    ->except('show');
