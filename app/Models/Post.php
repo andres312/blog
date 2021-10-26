@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Cviebrock\EloquentSluggable\Sluggable;
+//use Illuminate\Support\Facades\Storage;
 class Post extends Model
 {
     use HasFactory;
@@ -44,11 +45,23 @@ class Post extends Model
     }
 
     /**
-     * Method to get excerpt from body
+     * Get excerpt from body
      * @return 140 caracters
      */
     public function getGetExcerptAttribute()
     {
         return substr($this->body, 0, 140);
+    }
+    /**
+     * Get url image from storage php artisan store:link
+     * @return url image url
+     */
+    public function getGetImageAttribute()
+    {
+        if ($this->image) {
+            return url("storage/$this->image");
+            //return Storage::disk('public')->url($this->image);
+        }
+
     }
 }

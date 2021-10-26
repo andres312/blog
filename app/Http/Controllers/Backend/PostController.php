@@ -43,7 +43,7 @@ class PostController extends Controller
             [
             'user_id' => auth()->user()->id,
             ] +
-            $request->validated()
+            $request->all()
         );
         //validate fields
         /*
