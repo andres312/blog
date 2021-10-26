@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Http\Requests\PostRequest;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -56,7 +57,7 @@ class PostController extends Controller
         //image
         if ($request->file('file')) {
             //save image in folder public/posts and link to post->image
-            $imagenes= $request->file('file')->store('public/posts');
+            $imagenes= $request->file('file')->store('posts','public');
             $post->image = $imagenes;
             $post->save();
         }
@@ -93,9 +94,25 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        //update post
+        $post->update([
+            'title' => $request->title,
+            'body' => $request->body,
+            'iframe' => $request->iframe,
+        ]);
+        //delete image
+        if ($request->file('file')) {
+            //delete image from public
+            Storage::disk('public')->delete($post->image);
+            //save image in folder public/posts and link to post->image
+            $imagenes= $request->file('file')->store('posts','public');
+            $post->image = $imagenes;
+            $post->save();
+        }
+        //return to last view with session variable status
+        return back()->with('status','Post edited');
     }
 
     /**
@@ -106,6 +123,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        //delete image from public
+        Storage::disk('public')->delete($post->image);
+        //delete post
+        $post->delete();
+        //return preview request with status sucefully
+        return back()->with('status','Post deleted');
     }
 }
